@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAMZ · Shiv Nadar University — Attendance Management System</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-800-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-900-normal.css">
+<style>
+:root {
+  --bg: #f8fafc;
+  --bg2: #f1f5f9;
+  --card: #ffffff;
+  --card-border: #e2e8f0;
+  --accent: #2563eb;
+  --accent-light: #eff6ff;
+  --accent-hover: #1d4ed8;
+  --green: #10b981;
+  --green-bg: #ecfdf5;
+  --red: #f43f5e;
+  --red-bg: #fff1f2;
+  --orange: #f59e0b;
+  --orange-bg: #fffbeb;
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #94a3b8;
+  --border: #e2e8f0;
+  --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 20px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 1100px; margin: 0 auto; }
+
+/* ===== HEADER ===== */
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--card); border: 1px solid var(--border);
+  padding: 18px 24px; border-radius: 20px; box-shadow: var(--shadow);
+  margin-bottom: 24px;
+}
+.logo-area { display: flex; align-items: center; gap: 14px; }
+.logo-badge {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white; display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 16px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+.logo-text h1 { font-size: 16px; font-weight: 800; color: var(--text); }
+.logo-text p { font-size: 11px; color: var(--text2); font-weight: 500; }
+
+.view-switch-btn {
+  padding: 10px 18px; border-radius: 12px; font-size: 12px; font-weight: 700;
+  border: 1px solid var(--border); background: var(--bg2); color: var(--text2);
+  cursor: pointer; transition: all 0.2s;
+}
+.view-switch-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* ===== CARDS & LAYOUT ===== */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; padding: 24px; box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.card-title {
+  font-size: 15px; font-weight: 800; color: var(--text);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+
+/* SUBJECT SELECTOR GRID */
+.subject-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;
+}
+.subject-card {
+  border: 2px solid var(--border); border-radius: 16px; padding: 20px;
+  background: var(--card); cursor: pointer; transition: all 0.2s ease;
+  text-align: left;
+}
+.subject-card:hover { border-color: #cbd5e1; transform: translateY(-2px); }
+.subject-card.selected {
+  border-color: var(--accent); background: var(--accent-light);
+  box-shadow: 0 4px 14px rgba(37,99,235,0.1);
+}
+.subject-card h3 { font-size: 14px; font-weight: 800; color: var(--text); margin-top: 8px; }
+.subject-card p { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+/* FORM CONTROLS */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.form-input {
+  width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+}
+.form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+/* BUTTONS */
+.btn {
+  padding: 12px 24px; border-radius: 12px; font-size: 13px; font-weight: 700;
+  border: none; cursor: pointer; transition: all 0.2s; display: inline-flex;
+  align-items: center; justify-content: center; gap: 8px; font-family: 'Inter', sans-serif;
+}
+.btn-primary { background: var(--accent); color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid rgba(244,63,94,0.2); }
+.btn-danger:hover { background: #fee2e2; }
+.btn-success { background: var(--green-bg); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+.btn-success:hover { background: #d1fae5; }
+.btn-block { width: 100%; }
+
+/* STATS ROW */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-box {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 14px;
+  padding: 16px; text-align: center;
+}
+.stat-val { font-size: 24px; font-weight: 900; color: var(--text); }
+.stat-val.green { color: var(--green); }
+.stat-val.red { color: var(--red); }
+.stat-val.accent { color: var(--accent); }
+.stat-lbl { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; margin-top: 4px; }
+
+/* LIVE PROJECTOR PANEL */
+.projector-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+.qr-box {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 16px;
+  padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.qr-wrapper { background: white; padding: 12px; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 12px; }
+
+.pin-box {
+  background: var(--accent-light); border: 2px solid rgba(37,99,235,0.2);
+  border-radius: 16px; padding: 24px; text-align: center; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+}
+.pin-digits {
+  font-size: 52px; font-weight: 900; color: var(--accent); letter-spacing: 12px;
+  font-variant-numeric: tabular-nums; margin: 10px 0;
+}
+.timer-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 12px; }
+.timer-fill { height: 100%; background: var(--accent); width: 100%; transition: width 0.1s linear; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--card); border: 1px solid var(--border); border-radius: 24px;
+  width: 100%; max-width: 700px; max-height: 85vh; overflow-y: auto; padding: 28px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* ATTENDANCE GRID */
+.att-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 6px; margin: 16px 0; }
+.att-cell {
+  padding: 8px 4px; text-align: center; border-radius: 8px; font-size: 11px; font-weight: 800;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text3);
+}
+.att-cell.present { background: var(--green-bg); border-color: rgba(16,185,129,0.3); color: var(--green); }
+.att-cell.absent { background: var(--red-bg); border-color: rgba(244,63,94,0.3); color: var(--red); }
+
+.range-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
+.range-btn {
+  padding: 8px 16px; border-radius: 10px; font-size: 11px; font-weight: 700;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text2); cursor: pointer;
+}
+.range-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+.hidden { display: none !important; }
+
+@media(max-width: 768px) {
+  .projector-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .subject-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header>
+    <div class="logo-area">
+      <div class="logo-badge">SN</div>
+      <div class="logo-text">
+        <h1>SAMZ · Shiv Nadar University</h1>
+        <p>Student Attendance Management System</p>
+      </div>
+    </div>
+    <button class="view-switch-btn" id="viewSwitchBtn" onclick="toggleView()">📱 Switch to Student View</button>
+  </header>
+
+  <!-- ==================== FACULTY PORTAL ==================== -->
+  <div id="facultyPortal">
+    <!-- Setup Card -->
+    <div class="card" id="setupCard">
+      <div class="card-title">✨ Create Lecture Session</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:16px;">Select your subject, type the lecture hour/topic, and launch broadcasting.</p>
+      
+      <div class="subject-grid">
+        <div class="subject-card selected" id="cardIoT" onclick="selectSubject('IoT')">
+          <span style="font-size:24px;">📡</span>
+          <h3>Internet of Things</h3>
+          <p>ECE 401 · Sensor Networks & MQTT</p>
+        </div>
+        <div class="subject-card" id="cardTOC" onclick="selectSubject('TOC')">
+          <span style="font-size:24px;">🧮</span>
+          <h3>Theory of Computation</h3>
+          <p>CSE 302 · Automata & Complexity</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Lecture Hour / Topic (Typed by Faculty)</label>
+        <input class="form-input" id="inpTopic" placeholder="e.g. Hour 2 (09:00 AM) — MQTT Protocols & Broker Setup" value="Hour 2 (09:00 AM)" />
+      </div>
+
+      <button class="btn btn-primary btn-block" onclick="startSession()">🚀 Launch Attendance Session</button>
+    </div>
+
+    <!-- Active Session Projector Card -->
+    <div class="card hidden" id="activeCard">
+      <div class="card-title" style="justify-content:space-between;">
+        <span id="activeHeaderTitle">📡 Internet of Things · Hour 2</span>
+        <span style="font-size:11px;padding:4px 12px;background:var(--green-bg);color:var(--green);border-radius:20px;font-weight:800;">● LIVE SESSION</span>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-val green" id="statPresent">0</div>
+          <div class="stat-lbl">Present</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val red" id="statAbsent">60</div>
+          <div class="stat-lbl">Absent</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val accent" id="statTimer">45:00</div>
+          <div class="stat-lbl">Time Left</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="statRotations" style="color:var(--orange);">0</div>
+          <div class="stat-lbl">PIN Rotations</div>
+        </div>
+      </div>
+
+      <div class="projector-grid">
+        <div class="qr-box">
+          <div style="font-size:11px;font-weight:800;color:var(--text2);margin-bottom:12px;text-transform:uppercase;">Scan QR to Mark Attendance</div>
+          <div class="qr-wrapper" id="qrContainer"></div>
+          <span style="font-size:11px;color:var(--text3);">Point phone camera to open portal</span>
+        </div>
+
+        <div class="pin-box">
+          <div style="font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;">Active Secure PIN (15s Rotation)</div>
+          <div class="pin-digits" id="pinDisplay">----</div>
+          <div style="font-size:11px;color:var(--text2);" id="pinTimerText">Next rotation in 15s (5s grace active)</div>
+          <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:20px;">
+        <button class="btn btn-success" onclick="openReportModal()" style="flex:1;">📊 Open Attendance Report & Absentees</button>
+        <button class="btn btn-danger" onclick="endSession()">■ End Session</button>
+      </div>
+    </div>
+
+    <!-- Session History -->
+    <div class="card">
+      <div class="card-title">📋 Past Lecture Sessions</div>
+      <div id="historyList" style="font-size:12px;color:var(--text2);">No past sessions recorded yet.</div>
+    </div>
+  </div>
+
+  <!-- ==================== STUDENT VIEW ==================== -->
+  <div id="studentPortal" class="hidden">
+    <div class="card" style="max-width:480px;margin:40px auto;text-align:center;">
+      <div style="font-size:36px;margin-bottom:12px;">📱</div>
+      <h2 style="font-size:20px;font-weight:800;margin-bottom:6px;">Student Attendance Portal</h2>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:24px;" id="studentSubTitle">Enter your roll number and the active projector PIN.</p>
+
+      <div id="studentStatusBox" style="padding:16px;background:var(--red-bg);color:var(--red);border-radius:12px;font-size:12px;font-weight:700;margin-bottom:20px;">
+        ⚠️ No active attendance session found right now. Please wait for faculty to start!
+      </div>
+
+      <div id="studentFormArea" class="hidden">
+        <div class="form-group" style="text-align:left;">
+          <label class="form-label">Roll Number (Last 2 digits or Full Roll)</label>
+          <input class="form-input" id="stdRoll" placeholder="e.g. 07" maxlength="15" />
+        </div>
+        <div class="form-group" style="text-align:left;">
+          <label class="form-label">4-Digit Active PIN</label>
+          <input class="form-input" id="stdPin" placeholder="••••" maxlength="4" style="font-size:24px;text-align:center;letter-spacing:8px;font-weight:900;" />
+        </div>
+        <button class="btn btn-primary btn-block" onclick="submitAttendance()" style="padding:14px;font-size:15px;">✓ Submit Attendance</button>
+      </div>
+
+      <div id="studentMsg" style="margin-top:16px;font-size:13px;font-weight:700;"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== REPORT MODAL ==================== -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h3 style="font-size:18px;font-weight:900;" id="modalTitle">Attendance Report</h3>
+      <button onclick="closeReportModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text2);">✕</button>
+    </div>
+
+    <div class="range-toggle">
+      <button class="range-btn active" id="btnRange60" onclick="setRange(60)">Range 1–60</button>
+      <button class="range-btn" id="btnRange120" onclick="setRange(120)">Range 1–120</button>
+    </div>
+
+    <div class="stats-row" style="margin-bottom:16px;">
+      <div class="stat-box"><div class="stat-val green" id="modPresent">0</div><div class="stat-lbl">Present</div></div>
+      <div class="stat-box"><div class="stat-val red" id="modAbsent">60</div><div class="stat-lbl">Absentees</div></div>
+      <div class="stat-box"><div class="stat-val accent" id="modTotalRange">60</div><div class="stat-lbl">Total Students</div></div>
+    </div>
+
+    <div style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;text-transform:uppercase;">Visual Grid (Green = Present, Red = Absent)</div>
+    <div class="att-grid" id="modalGrid"></div>
+
+    <div style="display:flex;gap:12px;margin-top:20px;">
+      <button class="btn btn-success" onclick="downloadCSV()" style="flex:1;">⬇ Download Attendance CSV</button>
+      <button class="btn btn-primary" onclick="closeReportModal()">Close Report</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== STATE MANAGEMENT ====================
+let state = {
+  activeView: 'faculty',
+  selectedSubject: 'IoT',
+  subjectNames: { 'IoT': 'Internet of Things', 'TOC': 'Theory of Computation' },
+  session: null,
+  sessionsHistory: [],
+  currentPin: '',
+  previousPin: '',
+  pinCountdown: 15,
+  timerInterval: null,
+  pinInterval: null,
+  attendanceRecords: {}, // roll -> {time, pin, deviceId}
+  reportRange: 60,
+  deviceFingerprint: 'DEV-' + Math.random().toString(36).substring(2, 10)
+};
+
+function toggleView() {
+  state.activeView = state.activeView === 'faculty' ? 'student' : 'faculty';
+  document.getElementById('facultyPortal').classList.toggle('hidden', state.activeView !== 'faculty');
+  document.getElementById('studentPortal').classList.toggle('hidden', state.activeView !== 'student');
+  document.getElementById('viewSwitchBtn').textContent = state.activeView === 'faculty' ? '📱 Switch to Student View' : '🎓 Switch to Faculty Portal';
+  if (state.activeView === 'student') updateStudentPortalState();
+}
+
+function selectSubject(subj) {
+  state.selectedSubject = subj;
+  document.getElementById('cardIoT').classList.toggle('selected', subj === 'IoT');
+  document.getElementById('cardTOC').classList.toggle('selected', subj === 'TOC');
+  if (subj === 'IoT') {
+    document.getElementById('inpTopic').value = 'Hour 2 (09:00 AM) — Sensor Protocols & MQTT';
+  } else {
+    document.getElementById('inpTopic').value = 'Hour 3 (10:00 AM) — Turing Machines & Complexity';
+  }
+}
+
+// ==================== SESSION LIFECYCLE ====================
+function generatePin() {
+  return String(Math.floor(1000 + Math.random() * 9000));
+}
+
+function startSession() {
+  const topic = document.getElementById('inpTopic').value.trim() || 'Lecture';
+  const subjName = state.subjectNames[state.selectedSubject];
+
+  state.session = {
+    id: 'SAMZ-' + Date.now().toString(36).toUpperCase(),
+    subject: state.selectedSubject,
+    subjectName: subjName,
+    topic: topic,
+    startTime: Date.now(),
+    durationSeconds: 45 * 60,
+  };
+  state.attendanceRecords = {};
+  state.pinCountdown = 15;
+  state.currentPin = generatePin();
+  state.previousPin = '';
+
+  document.getElementById('setupCard').classList.add('hidden');
+  document.getElementById('activeCard').classList.remove('hidden');
+  document.getElementById('activeHeaderTitle').textContent = `${subjName} · ${topic}`;
+
+  renderQR();
+  updatePinDisplay();
+  startTimers();
+  updateLiveStats();
+}
+
+function endSession() {
+  if (!state.session) return;
+  clearInterval(state.timerInterval);
+  clearInterval(state.pinInterval);
+
+  state.sessionsHistory.unshift({ ...state.session, records: { ...state.attendanceRecords } });
+  state.session = null;
+
+  document.getElementById('activeCard').classList.add('hidden');
+  document.getElementById('setupCard').classList.remove('hidden');
+  renderHistory();
+}
+
+// ==================== TIMERS & PIN ROTATION ====================
+function startTimers() {
+  clearInterval(state.timerInterval);
+  clearInterval(state.pinInterval);
+
+  // 1-second interval for session timer & countdown bar
+  state.timerInterval = setInterval(() => {
+    if (!state.session) return;
+    state.session.durationSeconds--;
+    if (state.session.durationSeconds <= 0) {
+      endSession();
+      return;
+    }
+
+    const mins = Math.floor(state.session.durationSeconds / 60);
+    const secs = state.session.durationSeconds % 60;
+    document.getElementById('statTimer').textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+
+    state.pinCountdown -= 1;
+    if (state.pinCountdown < 0) state.pinCountdown = 15;
+
+    const fillPercent = (state.pinCountdown / 15) * 100;
+    document.getElementById('timerFill').style.width = fillPercent + '%';
+
+    let graceNote = state.pinCountdown <= 5 ? ' (5s grace active)' : '';
+    document.getElementById('pinTimerText').textContent = `Next rotation in ${state.pinCountdown}s${graceNote}`;
+
+  }, 1000);
+
+  // 15-second interval for actual PIN rotation
+  let rotationCount = 0;
+  state.pinInterval = setInterval(() => {
+    if (!state.session) return;
+    state.previousPin = state.currentPin;
+    state.currentPin = generatePin();
+    state.pinCountdown = 15;
+    rotationCount++;
+
+    document.getElementById('statRotations').textContent = rotationCount;
+    updatePinDisplay();
+    renderQR();
+  }, 15000);
+}
+
+function updatePinDisplay() {
+  document.getElementById('pinDisplay').textContent = state.currentPin;
+}
+
+function renderQR() {
+  const container = document.getElementById('qrContainer');
+  container.innerHTML = '';
+  try {
+    const studentUrl = window.location.href.split('#')[0] + '#student';
+    const qr = qrcode(0, 'M');
+    qr.addData(studentUrl);
+    qr.make();
+    
+    const size = 5;
+    const moduleCount = qr.getModuleCount();
+    const canvas = document.createElement('canvas');
+    canvas.width = moduleCount * size;
+    canvas.height = moduleCount * size;
+    canvas.style.width = '180px';
+    canvas.style.height = '180px';
+    const ctx = canvas.getContext('2d');
+    
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0f172a';
+    for (let r = 0; r < moduleCount; r++) {
+      for (let c = 0; c < moduleCount; c++) {
+        if (qr.isDark(r, c)) ctx.fillRect(c * size, r * size, size, size);
+      }
+    }
+    container.appendChild(canvas);
+  } catch (e) {
+    container.innerHTML = 'QR Error';
+  }
+}
+
+function updateLiveStats() {
+  const presentCount = Object.keys(state.attendanceRecords).length;
+  const absentCount = Math.max(0, state.reportRange - presentCount);
+  document.getElementById('statPresent').textContent = presentCount;
+  document.getElementById('statAbsent').textContent = absentCount;
+}
+
+// ==================== STUDENT PORTAL & SUBMISSION ====================
+function updateStudentPortalState() {
+  const statusBox = document.getElementById('studentStatusBox');
+  const formArea = document.getElementById('studentFormArea');
+
+  if (state.session) {
+    statusBox.classList.add('hidden');
+    formArea.classList.remove('hidden');
+    document.getElementById('studentSubTitle').textContent = `Marking attendance for: ${state.session.subjectName} (${state.session.topic})`;
+  } else {
+    statusBox.classList.remove('hidden');
+    formArea.classList.add('hidden');
+    document.getElementById('studentSubTitle').textContent = 'Enter your roll number and the active projector PIN.';
+  }
+}
+
+function submitAttendance() {
+  const msgEl = document.getElementById('studentMsg');
+  msgEl.textContent = '';
+
+  if (!state.session) {
+    msgEl.style.color = 'var(--red)';
+    msgEl.textContent = 'Couldnt submit , plz try in next qr,as time out';
+    return;
+  }
+
+  const roll = document.getElementById('stdRoll').value.trim();
+  const pin = document.getElementById('stdPin').value.trim();
+
+  if (!roll) {
+    msgEl.style.color = 'var(--red)';
+    msgEl.textContent = 'Please enter your roll number.';
+    return;
+  }
+  if (!pin || pin.length !== 4) {
+    msgEl.style.color = 'var(--red)';
+    msgEl.textContent = 'Please enter a valid 4-digit PIN.';
+    return;
+  }
+
+  // Verify PIN (Current PIN or Previous PIN within 5s grace)
+  const isCurrent = (pin === state.currentPin);
+  const isGrace = (pin === state.previousPin && state.pinCountdown <= 5);
+
+  if (!isCurrent && !isGrace) {
+    msgEl.style.color = 'var(--red)';
+    msgEl.textContent = 'Couldnt submit , plz try in next qr,as time out';
+    return;
+  }
+
+  // Anti-proxy check: One submission per device
+  const existingDevice = Object.values(state.attendanceRecords).find(r => r.deviceId === state.deviceFingerprint);
+  if (existingDevice) {
+    msgEl.style.color = 'var(--red)';
+    msgEl.textContent = 'This device has already logged attendance for this session (Anti-Proxy enforced).';
+    return;
+  }
+
+  // Check duplicate roll
+  if (state.attendanceRecords[roll]) {
+    msgEl.style.color = 'var(--orange)';
+    msgEl.textContent = `Roll number ${roll} is already marked present!`;
+    return;
+  }
+
+  // SUCCESS
+  state.attendanceRecords[roll] = {
+    time: new Date().toLocaleTimeString(),
+    deviceId: state.deviceFingerprint
+  };
+
+  msgEl.style.color = 'var(--green)';
+  msgEl.textContent = `✓ Successfully accepted attendance for Roll ${roll}!`;
+  document.getElementById('stdRoll').value = '';
+  document.getElementById('stdPin').value = '';
+  updateLiveStats();
+}
+
+// ==================== REPORTS & ABSENTEES ====================
+function openReportModal() {
+  document.getElementById('reportModal').classList.add('show');
+  renderReportModalData();
+}
+
+function closeReportModal() {
+  document.getElementById('reportModal').classList.remove('show');
+}
+
+function setRange(range) {
+  state.reportRange = range;
+  document.getElementById('btnRange60').classList.toggle('active', range === 60);
+  document.getElementById('btnRange120').classList.toggle('active', range === 120);
+  renderReportModalData();
+  updateLiveStats();
+}
+
+function renderReportModalData() {
+  const range = state.reportRange;
+  const presentMap = state.attendanceRecords;
+  const presentCount = Object.keys(presentMap).length;
+  const absentCount = Math.max(0, range - presentCount);
+
+  document.getElementById('modPresent').textContent = presentCount;
+  document.getElementById('modAbsent').textContent = absentCount;
+  document.getElementById('modTotalRange').textContent = range;
+
+  const grid = document.getElementById('modalGrid');
+  grid.innerHTML = '';
+
+  for (let i = 1; i <= range; i++) {
+    const rollStr = String(i).padStart(2, '0');
+    const isPresent = presentMap[rollStr] || presentMap[String(i)];
+    const cell = document.createElement('div');
+    cell.className = `att-cell ${isPresent ? 'present' : 'absent'}`;
+    cell.textContent = i;
+    cell.title = `Roll ${i}: ${isPresent ? 'Present' : 'Absent'}`;
+    grid.appendChild(cell);
+  }
+}
+
+function downloadCSV() {
+  const range = state.reportRange;
+  let csv = 'Roll Number,Status,Time Marked\n';
+  for (let i = 1; i <= range; i++) {
+    const rollStr = String(i);
+    const altStr = String(i).padStart(2, '0');
+    const record = state.attendanceRecords[rollStr] || state.attendanceRecords[altStr];
+    if (record) {
+      csv += `${i},Present,${record.time}\n`;
+    } else {
+      csv += `${i},Absent,\n`;
+    }
+  }
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `SAMZ_Attendance_Report_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function renderHistory() {
+  const historyList = document.getElementById('historyList');
+  if (state.sessionsHistory.length === 0) {
+    historyList.innerHTML = 'No past sessions recorded yet.';
+    return;
+  }
+  historyList.innerHTML = state.sessionsHistory.map(s => `
+    <div style="padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <strong>${s.subjectName}</strong> — ${s.topic}
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;">ID: ${s.id}</div>
+      </div>
+      <span style="font-size:11px;font-weight:700;color:var(--green);">Completed (${Object.keys(s.records).length} Present)</span>
+    </div>
+  `).join('');
+}
+
+// Initial check for URL hash to support student view loading directly
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.location.hash.includes('student')) {
+    toggleView();
+  }
+});
+</script>
+</body>
+</html>
